@@ -36,6 +36,8 @@ jobs:
           --with tox-uv
           tox run -e coverage-clean,py,coverage-report
   build:
+    permissions:
+      contents: "write"
     uses: "./.github/workflows/build.yaml"
     if: "${{ github.event == 'release' && success() }}"
 ...
