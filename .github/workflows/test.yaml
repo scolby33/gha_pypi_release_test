@@ -40,5 +40,5 @@ jobs:
       contents: "write"
     uses: "./.github/workflows/build.yaml"
     needs: [ "test" ]
-    if: "${{ github.event == 'release' && success() }}"
+    if: "${{ github.event == 'release' }}"
 ...
