@@ -1,0 +1,56 @@
+---
+name: "build distributions"
+
+permissions: {}
+
+on:
+  workflow_call:
+
+jobs:
+  build-distributions:
+    permissions:
+      contents: "write"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871"  # v4.2.1
+        with:
+          persist-credentials: false
+      - name: "Install uv"
+        uses: "astral-sh/setup-uv@77c28f02b3322332d4a4446b3177f426da8bf086"  # v3.1.5
+        with:
+          enable-cache: false
+          cache-dependency-glob: "pyproject.toml"
+      - name: "Build sdist"
+        id: "build-sdist"
+        run: |
+          uv build --sdist
+          # TODO: attacker could control the name of the output dist, which means this could be an injection
+          sdist_path=$(find dist -name 'pushover_complete-*.tar.gz' | head -n1)
+          echo "SDIST_PATH=${sdist_path}" >> "$GITHUB_OUTPUT"
+          echo "SDIST_NAME=${sdist_path#dist/}" >> "$GITHUB_OUTPUT"
+      - name: "Build wheel"
+        id: "build-wheel"
+        run: |
+          uv build --wheel
+          wheel_path=$(find dist -name 'pushover_complete-*.whl' | head -n1)
+          echo "WHEEL_PATH=${wheel_path}" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=${wheel_path#dist/}" >> "$GITHUB_OUTPUT"
+      - name: "Upload sdist to release asset"
+        uses: "actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          upload_url: "${{ github.event.workflow_run.event.release.upload_url }}"
+          asset_path: "${{ steps.build-sdist.outputs.SDIST_PATH }}"
+          asset_name: "${{ steps.build-sdist.outputs.SDIST_NAME }}"
+          asset_content_type: "application/x-gtar"
+      - name: "Upload wheel to release asset"
+        uses: "actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          upload_url: "${{ github.event.workflow_run.event.release.upload_url }}"
+          asset_path: "${{ steps.build-wheel.outputs.WHEEL_PATH }}"
+          asset_name: "${{ steps.build-wheel.outputs.WHEEL_NAME }}"
+          asset_content_type: "application/x-pywheel+zip"
+...
