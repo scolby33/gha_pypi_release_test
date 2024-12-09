@@ -39,7 +39,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - run: >
-          echo "${{ github.event }}"
+          echo "${{ toJSON(github.event) }}"
   build:
     permissions:
       contents: "write"
