@@ -26,15 +26,15 @@ jobs:
           uv build --sdist
           # TODO: attacker could control the name of the output dist, which means this could be an injection
           sdist_path=$(find dist -name 'pushover_complete-*.tar.gz' | head -n1)
-          echo "SDIST_PATH=${sdist_path}" >> "$GITHUB_OUTPUT"
-          echo "SDIST_NAME=${sdist_path#dist/}" >> "$GITHUB_OUTPUT"
+          echo "SDIST_PATH=${sdist_path}" | tee -a "$GITHUB_OUTPUT"
+          echo "SDIST_NAME=${sdist_path#dist/}" | tee -a "$GITHUB_OUTPUT"
       - name: "Build wheel"
         id: "build-wheel"
         run: |
           uv build --wheel
           wheel_path=$(find dist -name 'pushover_complete-*.whl' | head -n1)
-          echo "WHEEL_PATH=${wheel_path}" >> "$GITHUB_OUTPUT"
-          echo "WHEEL_NAME=${wheel_path#dist/}" >> "$GITHUB_OUTPUT"
+          echo "WHEEL_PATH=${wheel_path}" | tee -a "$GITHUB_OUTPUT"
+          echo "WHEEL_NAME=${wheel_path#dist/}" | tee -a "$GITHUB_OUTPUT"
       - name: "Upload sdist to release asset"
         uses: "actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5"
         env:
