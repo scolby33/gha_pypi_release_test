@@ -35,15 +35,10 @@ jobs:
           --python '${{ matrix.python-version }}'
           --with tox-uv
           tox run -e coverage-clean,py,coverage-report
-  echo:
-    runs-on: "ubuntu-latest"
-    steps:
-      - run: >
-          echo "${{ toJSON(github.event) }}"
   build:
     permissions:
       contents: "write"
     uses: "./.github/workflows/build.yaml"
     needs: [ "test" ]
-    if: "${{ github.event == 'release' }}"
+    if: "${{ github.event_name == 'release' }}"
 ...
