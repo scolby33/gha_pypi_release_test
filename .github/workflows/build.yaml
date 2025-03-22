@@ -20,37 +20,22 @@ jobs:
         with:
           enable-cache: false
           cache-dependency-glob: "pyproject.toml"
+      - name: "Check for empty dist/ directory"
+        run: |
+          test -e dist && { echo "a pre-existing dist directory was detected" >&2; exit 1 }
       - name: "Build sdist"
         id: "build-sdist"
         run: |
           uv build --sdist
-          # TODO: attacker could control the name of the output dist, which means this could be an injection
-          sdist_path=$(find dist -name 'gha_pypi_release_test-*.tar.gz' | head -n1)
-          echo "SDIST_PATH=${sdist_path}" | tee -a "$GITHUB_OUTPUT"
-          echo "SDIST_NAME=${sdist_path#dist/}" | tee -a "$GITHUB_OUTPUT"
       - name: "Build wheel"
         id: "build-wheel"
         run: |
           uv build --wheel
-          wheel_path=$(find dist -name 'gha_pypi_release_test-*.whl' | head -n1)
-          echo "WHEEL_PATH=${wheel_path}" | tee -a "$GITHUB_OUTPUT"
-          echo "WHEEL_NAME=${wheel_path#dist/}" | tee -a "$GITHUB_OUTPUT"
-      - name: "Upload sdist to release asset"
-        uses: "actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: "Upload dists to build artifacts"
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"  # v4.6.2
         with:
-          upload_url: "${{ github.event.release.upload_url }}"
-          asset_path: "${{ steps.build-sdist.outputs.SDIST_PATH }}"
-          asset_name: "${{ steps.build-sdist.outputs.SDIST_NAME }}"
-          asset_content_type: "application/x-gtar"
-      - name: "Upload wheel to release asset"
-        uses: "actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        with:
-          upload_url: "${{ github.event.release.upload_url }}"
-          asset_path: "${{ steps.build-wheel.outputs.WHEEL_PATH }}"
-          asset_name: "${{ steps.build-wheel.outputs.WHEEL_NAME }}"
-          asset_content_type: "application/x-pywheel+zip"
+          name: "distributions"
+          path: "dist/*"
+          if-no-files-found: "error"
+          compression-level: 0  # dists are already compressed
 ...

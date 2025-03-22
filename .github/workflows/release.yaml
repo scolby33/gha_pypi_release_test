@@ -1,0 +1,29 @@
+---
+name: "upload distributions to PyPI"
+
+permissions: {}
+
+on:
+  workflow_call:
+
+jobs:
+  upload-distributions:
+    permissions:
+      id-token: "write"
+    runs-on: "ubuntu-latest"
+    environment:
+      name: "testpypi"
+      url: "https://test.pypi.org/p/gha_release_test"
+    steps:
+      - name: "Download distributions from build artifacts"
+        id: "download-dists"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"  # v4.2.1
+        with:
+          name: "distributions"
+          path: "dist"
+      - name: "Upload to PyPI"
+        uses: "pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc"  # v1.12.4
+        with:
+          repository-url: "https://test.pypi.org/legacy/"
+          print-hash: true
+...
