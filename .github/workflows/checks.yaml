@@ -1,0 +1,21 @@
+---
+permissions: {}
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+  workflow_call:
+
+jobs:
+  test:
+    permissions:
+      contents: "read"
+    uses: "./.github/workflows/test.yaml"
+
+  build:
+    permissions:
+      contents: "read"
+    uses: "./.github/workflows/build.yaml"
+...
