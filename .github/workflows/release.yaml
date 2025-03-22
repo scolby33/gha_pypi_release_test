@@ -21,7 +21,6 @@ jobs:
     environment:
       name: "testpypi"
       url: "https://test.pypi.org/p/gha_release_test"
-    uses: "./.github/workflows/publish.yaml"
     needs: [ "checks" ]
     steps:
       - name: "Download distributions from build artifacts"
