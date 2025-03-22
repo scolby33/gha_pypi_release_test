@@ -22,6 +22,7 @@ jobs:
           cache-dependency-glob: "pyproject.toml"
       - name: "Check for empty dist/ directory"
         run: |
+          ls -l
           test -e dist && { echo "a pre-existing dist directory was detected" >&2; exit 1; }
       - name: "Build sdist"
         id: "build-sdist"
