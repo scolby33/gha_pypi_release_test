@@ -7,7 +7,7 @@ on:
   workflow_call:
 
 jobs:
-  build-distributions:
+  build:
     permissions:
       contents: "read"
     runs-on: "ubuntu-latest"
