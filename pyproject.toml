@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gha_pypi_release_test"
 description = "A test package for figuring out how GitHub Actions releases should work."
-version = "0.0.10"
+version = "0.0.11"
 
 [dependency-groups]
 tests = [
