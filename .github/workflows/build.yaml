@@ -29,15 +29,10 @@ jobs:
             exit 1
           fi
 
-      - name: "Build sdist"
-        id: "build-sdist"
+      - name: "Build sdist and wheel"
+        id: "build"
         run: |
-          uv build --sdist
-
-      - name: "Build wheel"
-        id: "build-wheel"
-        run: |
-          uv build --wheel
+          uv build --sdist --wheel
 
       - name: "Upload dists to build artifacts"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"  # v4.6.2
