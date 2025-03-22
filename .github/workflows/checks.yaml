@@ -1,4 +1,6 @@
 ---
+name: "checks"
+
 permissions: {}
 
 on:
