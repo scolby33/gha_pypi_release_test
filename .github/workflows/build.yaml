@@ -23,7 +23,6 @@ jobs:
 
       - name: "Check for existing dist/ directory"
         run: |
-          ls -l
           if test -e dist
           then
             echo "a pre-existing dist directory was detected >&2"
